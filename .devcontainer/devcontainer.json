@@ -1,0 +1,23 @@
+{
+    "name": "AI Developer with Nvidia GPU (Ubuntu22.04)",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+    "runArgs": [
+        "--gpus=all"
+    ],
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/va-h/devcontainers-features/uv:1": {}
+    },
+    "postCreateCommand": "bash .devcontainer/setup.sh",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "donjayamanne.python-extension-pack",
+                "charliermarsh.ruff",
+                "esbenp.prettier-vscode"
+            ]
+        }
+    },
+    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    "remoteUser": "root"
+}

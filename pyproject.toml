@@ -1,0 +1,17 @@
+[project]
+name = "teachatbot"
+version = "0.1.0"
+description = "Bot used in IEP project."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "dotenv>=0.9.9",
+    "fastapi>=0.117.1",
+    "google>=3.0.0",
+    "google-genai>=1.38.0",
+    "google-generativeai>=0.8.5",
+    "langchain>=0.3.27",
+    "sentence-transformers>=5.1.0",
+    "uvicorn>=0.37.0",
+    "vecs>=0.4.5",
+]
