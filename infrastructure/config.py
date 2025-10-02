@@ -1,7 +1,7 @@
 import os
 
-import google.generativeai as genai
 from dotenv import load_dotenv
+from google import genai
 from sentence_transformers import SentenceTransformer
 
 
@@ -14,10 +14,10 @@ class Config:
         self.DB_URL = os.environ.get("DB_URL")
         self.GEMINI_MODEL = os.environ.get("GEMINI_MODEL")
         self.EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL")
+        self.THINKING_BUDGET = os.environ.get("THINKING_BUDGET")
 
-    def configure_gemini(self) -> genai.GenerativeModel:
-        genai.configure(api_key=self.GEMINI_API_KEY)
-        return genai.GenerativeModel(self.GEMINI_MODEL)
+    def configure_gemini(self) -> genai.Client:
+        return genai.Client(api_key=self.GEMINI_API_KEY)
 
     def get_embedding_model(self):
         return SentenceTransformer("DMetaSoul/sbert-chinese-general-v2")
