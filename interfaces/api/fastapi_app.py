@@ -1,6 +1,8 @@
+import json
+
 from fastapi import FastAPI
 
-from application.dto import AnswerResponseDTO, KnowledgeRequestDTO
+from application.dto import CourseResponse, KnowledgeRequestDTO
 from application.use_cases.ask_question import AskQuestionUseCase
 from application.use_cases.insert_knowledge import InsertKnowledgeUseCase
 from domain.services.gemini_service import GeminiService
@@ -14,10 +16,15 @@ def create_app() -> FastAPI:
 
     # Initialize configuration, models, and database
     config = Config()
-    gemini_model = config.configure_gemini()
+    gemini_client = config.configure_gemini()
     embedding_model = config.get_embedding_model()
     vector_db = VectorDB(config.DB_URL)
-    gemini_service = GeminiService(gemini_model)
+    gemini_service = GeminiService(
+        gemini_client,
+        config.GEMINI_MODEL,
+        response_schema=CourseResponse,
+        model_thinking_budget=config.THINKING_BUDGET,
+    )
     google_search = GoogleSearch(config.SEARCH_API_KEY, config.SEARCH_ENGINE_ID)
 
     # Initialize use cases
@@ -34,9 +41,9 @@ def create_app() -> FastAPI:
     def insert_knowledge(request: KnowledgeRequestDTO):
         insert_knowledge_use_case.execute([item.content for item in request.knowledge])
 
-    @app.get("/ask/", response_model=AnswerResponseDTO)
+    @app.get("/ask/", response_model=CourseResponse)
     def ask_question(userInput: str):
-        answer = ask_question_use_case.execute(userInput)
-        return {"answer": answer}
+        answer = json.loads(ask_question_use_case.execute(userInput))
+        return answer
 
     return app
