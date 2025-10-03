@@ -37,9 +37,14 @@ def create_app() -> FastAPI:
     )
 
     # Define API endpoints
+    @app.get("/health/")
+    def health_check():
+        return {"status": "ok"}
+
     @app.post("/insert/")
     def insert_knowledge(request: KnowledgeRequestDTO):
         insert_knowledge_use_case.execute([item.content for item in request.knowledge])
+        return {"message": "Knowledge inserted successfully."}
 
     @app.get("/ask/", response_model=CourseResponse)
     def ask_question(userInput: str):

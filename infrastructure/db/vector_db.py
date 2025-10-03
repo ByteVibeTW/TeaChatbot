@@ -1,3 +1,5 @@
+import uuid
+
 import vecs
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
@@ -18,14 +20,12 @@ class VectorDB:
             chunk_size=100, chunk_overlap=20, separators=["\n", "。", "！", "？", "，"]
         )
         vectors = []
-        index = 1
         for context in knowledge:
             chunks = text_splitter.split_text(context)
-            print(f"chunks: {chunks}")
+            # print(f"chunks: {chunks}")
             for chunk in chunks:
                 embedding = embedding_model.encode(chunk).tolist()
-                vectors.append((index, embedding, {"text": chunk}))
-                index += 1
+                vectors.append((str(uuid.uuid4()), embedding, {"text": chunk}))
         self.collection.upsert(vectors)
 
     def query(self, prompt, search_limit=10) -> list:
