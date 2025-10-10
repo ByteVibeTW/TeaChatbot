@@ -9,7 +9,6 @@ class GeminiService:
         self,
         client: genai.Client,
         model: str,
-        response_schema=None,
         response_type="application/json",
         model_thinking_budget=0,
     ):
@@ -18,7 +17,6 @@ class GeminiService:
         self.model_config = GenerateContentConfig(
             thinking_config=ThinkingConfig(thinking_budget=model_thinking_budget),
             response_mime_type=response_type,  # 強制回傳指定格式
-            response_schema=response_schema,
         )
         """
         thinking_budget: int
@@ -27,19 +25,35 @@ class GeminiService:
             512 / 1024: Basic thinking 指定 token 數量上限
         """
 
+    # 將問題精簡摘要
     def generate_search_query(self, question: str) -> Optional[str]:
         prompt = f"Generate a concise search query for the following question: {question}, without extra text."
         try:
-            response = self.client.models.generate_content(
+            return self.client.models.generate_content(
                 model="gemini-2.5-flash-lite", contents=prompt
-            )
-            return response
+            ).text
         except Exception as e:
             print(f"[GeminiService] Error generating search query: {e}")
             return None
 
-    def generate_answer(self, prompt: str) -> str:
+    # 根據主題生成相關問題
+    def generate_question(self, topic: str, response_schema=None) -> str:
+        prompt = topic
         try:
+            if response_schema:
+                self.model_config.response_schema = response_schema
+            return self.client.models.generate_content(
+                model=self.model, contents=prompt, config=self.model_config
+            ).text
+        except Exception as e:
+            print(f"[GeminiService] Error generating question: {e}")
+            return "ERROR"
+
+    # 通用的生成方法
+    def generate_answer(self, prompt: str, response_schema=None) -> str:
+        try:
+            if response_schema:
+                self.model_config.response_schema = response_schema
             return self.client.models.generate_content(
                 model=self.model, contents=prompt, config=self.model_config
             ).text

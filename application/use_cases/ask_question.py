@@ -19,13 +19,16 @@ class AskQuestionUseCase:
         self.prompt_engineer = PromptEngineer()
         self.prompt_loader = PromptLoader(prompt_template_file_name)
 
-    def execute(self, user_input: str) -> str:
+    def execute(self, user_input: str, response_schema=None) -> str:
         search_query = self.gemini_service.generate_search_query(user_input)
+        # print(f"Generated Search Query: {search_query}")
         google_results = self.google_search.search(search_query, max_results=10)
         vector_results = self.vector_db.query(user_input, search_limit=10)
         text1 = self.prompt_engineer.build_rag_vector_prompt(vector_results)
         text2 = self.prompt_engineer.build_rag_google_search_prompt(google_results)
         prompt_template = self.prompt_loader.load_prompt()
         prompt = prompt_template.format(text1=text1, text2=text2, userInput=user_input)
-        print(f"Finial Prompt:\n{prompt}")
-        return self.gemini_service.generate_answer(prompt)
+        print(f"Final Prompt:\n{prompt}")
+        return self.gemini_service.generate_answer(
+            prompt, response_schema=response_schema
+        )
