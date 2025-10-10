@@ -3,14 +3,6 @@ from typing import List
 from pydantic import BaseModel
 
 
-class KnowledgeItemDTO(BaseModel):
-    content: str
-
-
-class KnowledgeRequestDTO(BaseModel):
-    knowledge: List[KnowledgeItemDTO]
-
-
 class ChapterContent(BaseModel):
     article: str
     practice: str
