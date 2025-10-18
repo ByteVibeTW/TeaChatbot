@@ -18,8 +18,4 @@ WORKDIR /app
 
 COPY . /app
 
-RUN uv sync --frozen --no-cache-dir && \
-    rm -rf /root/.cache/uv && \
-    rm -rf /root/.cache/pip
-
-CMD ["uv", "run", "python", "main.py"]
+CMD ["sh", "-c","if [ ! -d .venv ]; then uv sync --frozen --no-cache-dir; fi && uv run python main.py"]
