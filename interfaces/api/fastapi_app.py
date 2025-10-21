@@ -4,8 +4,10 @@ from fastapi import FastAPI
 
 from application.dto.course import CourseResponse
 from application.dto.knowledge import KnowledgeRequest
+from application.dto.user_feedback import UserFeedbackRequest
 from application.dto.user_question import UserQuestionRequest
-from application.use_cases.ask_question import AskQuestionUseCase
+from application.use_cases.create_user_temp import CreateUserTempUseCase
+from application.use_cases.generate_course import GenerateCourseUseCase
 from application.use_cases.generate_questions import GenerateQuestionsUseCase
 from application.use_cases.insert_knowledge import InsertKnowledgeUseCase
 from domain.services.gemini_service import GeminiService
@@ -16,6 +18,9 @@ from infrastructure.external.google_search import GoogleSearch
 
 def create_app() -> FastAPI:
     app = FastAPI()
+
+    # variables
+    temp_file_name = "user_temp.json"  # 使用者暫存檔案名稱
 
     # Initialize configuration, models, and database
     config = Config()
@@ -34,11 +39,13 @@ def create_app() -> FastAPI:
     generate_questions_use_case = GenerateQuestionsUseCase(
         gemini_service, prompt_template_file_name="exploratory_question.txt"
     )
-    ask_question_use_case = AskQuestionUseCase(
+    create_user_temp_use_case = CreateUserTempUseCase(temp_file_name)
+    generate_course_use_case = GenerateCourseUseCase(
         gemini_service,
         vector_db,
         google_search,
         prompt_template_file_name="course_prompt_template.txt",
+        temp_file_name=temp_file_name,
     )
 
     # Define API endpoints
@@ -52,22 +59,20 @@ def create_app() -> FastAPI:
         return {"message": "Knowledge inserted successfully."}
 
     @app.get("/generate_questions/", response_model=UserQuestionRequest)
-    def generate_questions(userInput: str):
+    def generate_questions(userId: str, userInput: str):
         questions = json.loads(
             generate_questions_use_case.execute(
                 userInput, response_schema=UserQuestionRequest
             )
         )
+        create_user_temp_use_case.execute(userId, userInput, questions)
         return questions
 
-    # def user_feedback(request: UserFeedbackRequest):
-    #     pass
-
-    @app.get("/ask/", response_model=CourseResponse)
-    def ask_question(userInput: str):
-        answer = json.loads(
-            ask_question_use_case.execute(userInput, response_schema=CourseResponse)
+    @app.post("/generate_course/")
+    def generate_course(request: UserFeedbackRequest):
+        course = json.loads(
+            generate_course_use_case.execute(request, response_schema=CourseResponse)
         )
-        return answer
+        return course
 
     return app
