@@ -11,3 +11,6 @@ wheels/
 
 # Environment variables
 .env
+
+# temporary files
+user_temp.json
