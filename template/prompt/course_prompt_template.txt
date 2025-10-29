@@ -15,6 +15,7 @@
 # 輸出內容規格：
 依照以下大綱整理內容:
 - 課程標題
+- 課程簡介
 - 課程章節
 - 每個章節的小標題
 
@@ -25,10 +26,12 @@
 # 範例輸出：
 {{
   "course_name": "課程名稱",
+  "intro": "課程簡介",
   "sections": [
     {{
-      "chapter_name": "章節名稱",
-      "chapter_content": [
+      "chapter_name": "第幾章：章節名稱",
+      "description": "本章節介紹",
+      "content": [
         小標題1
         小標題2,
         小標題3,
