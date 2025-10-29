@@ -14,3 +14,7 @@ wheels/
 
 # temporary files
 user_temp.json
+
+# test files
+sandbox/
+test/
