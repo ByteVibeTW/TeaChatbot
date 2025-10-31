@@ -11,9 +11,10 @@ dependencies = [
     "google>=3.0.0",
     "google-genai>=1.38.0",
     "google-generativeai>=0.8.5",
+    "langchain>=1.0.3",
+    "langchain-text-splitters>=1.0.0",
     "sentence-transformers>=5.1.0",
     "supabase>=2.22.2",
     "uvicorn>=0.37.0",
     "vecs>=0.4.5",
-    "langchain>=0.3.27",
 ]
