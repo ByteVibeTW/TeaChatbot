@@ -15,4 +15,5 @@ dependencies = [
     "supabase>=2.22.2",
     "uvicorn>=0.37.0",
     "vecs>=0.4.5",
+    "langchain>=0.3.27"
 ]
