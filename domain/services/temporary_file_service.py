@@ -3,6 +3,10 @@ import os
 
 
 class TemporaryFileService:
+    """
+    讀取與寫入暫存檔
+    """
+
     def __init__(self, file_path: str):
         if not os.path.exists(file_path):
             try:

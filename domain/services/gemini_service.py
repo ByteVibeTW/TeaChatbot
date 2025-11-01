@@ -5,6 +5,10 @@ from google.genai.types import GenerateContentConfig, ThinkingConfig
 
 
 class GeminiService:
+    """
+    Gemini 模型服務
+    """
+
     def __init__(
         self,
         client: genai.Client,
