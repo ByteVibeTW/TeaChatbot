@@ -9,5 +9,5 @@ class UserAnswerSection(BaseModel):
 
 
 class UserFeedbackRequest(BaseModel):
-    user_id: str
+    user_id: int
     user_answer: List[UserAnswerSection]
