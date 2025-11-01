@@ -8,6 +8,10 @@ from infrastructure.external.google_search import GoogleSearch
 
 
 class GenerateCourseUseCase:
+    """
+    生成課程大綱
+    """
+
     def __init__(
         self,
         gemini_service: GeminiService,

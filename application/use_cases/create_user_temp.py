@@ -2,6 +2,10 @@ from domain.services.temporary_file_service import TemporaryFileService
 
 
 class CreateUserTempUseCase:
+    """
+    創建使用者暫存檔
+    """
+
     def __init__(self, temp_file_name: str):
         self.temp_file_service = TemporaryFileService(temp_file_name)
 

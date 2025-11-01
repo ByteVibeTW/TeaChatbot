@@ -3,6 +3,10 @@ from domain.services.gemini_service import GeminiService
 
 
 class GenerateQuestionsUseCase:
+    """
+    生成探索性問題
+    """
+
     def __init__(self, gemini_service: GeminiService, prompt_template_file_name: str):
         self.gemini_service = gemini_service
         self.prompt_loader = PromptLoader(prompt_template_file_name)
