@@ -1,3 +1,5 @@
+import json
+
 from application.dto.course_content import CourseContentRequest
 from application.use_cases.prompt_loader import PromptLoader
 from domain.services.gemini_service import GeminiService
@@ -31,7 +33,21 @@ class GenerateChapterContentUseCase:
             sectionName=section_name,
             chapterName=chapter_name,
         )
-        # practice_prompt = ""
-        return self.gemini_service.generate_answer(
-            content_prompt, response_schema=response_schema
+        content = json.loads(
+            self.gemini_service.generate_answer(
+                content_prompt, response_schema=response_schema
+            )
         )
+        practice_prompt = practice_prompt_template.format(
+            courseName=course_name,
+            intro=course_intro,
+            sectionName=section_name,
+            chapterName=chapter_name,
+            content=content,
+        )
+        practice = json.loads(
+            self.gemini_service.generate_answer(
+                practice_prompt, response_schema=response_schema
+            )
+        )
+        return f"{content['content']}\n\n{practice['content']}"

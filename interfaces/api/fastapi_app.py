@@ -136,14 +136,15 @@ def create_app() -> FastAPI:
         tags=["生成課程模組"],
     )
     def generate_chapter_content(request: CourseContentRequest):
-        chapter_content = json.loads(
-            generate_chapter_content_use_case.execute(
-                request, response_schema=CourseContentResponse
-            )
+        chapter_content = generate_chapter_content_use_case.execute(
+            request, response_schema=CourseContentResponse
         )
+        print(chapter_content)
         api_request_service.execute(
-            "PUT", endpoint=f"chapters/{request.chapter_id}", payload=chapter_content
+            "PUT",
+            endpoint=f"chapters/{request.chapter_id}",
+            payload={"content": chapter_content},
         )
-        return {"message": "Chapter content generated successfully."}
+        return chapter_content
 
     return app
