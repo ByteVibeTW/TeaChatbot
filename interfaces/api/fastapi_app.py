@@ -125,8 +125,14 @@ def create_app() -> FastAPI:
             create_course_payload["sections"].append(section_template)
             create_course_payload["outline"] += f"{section_template['sectionName']}\n"
         print(create_course_payload)
-        api_request_service.execute(
+        course = api_request_service.execute(
             "POST", endpoint="courses/detail", payload=create_course_payload
+        )
+        course_id = course["id"]
+        api_request_service.execute(
+            "POST",
+            "enrollments",
+            payload={"studentSub": request.user_id, "courseId": course_id},
         )
         return course
 
