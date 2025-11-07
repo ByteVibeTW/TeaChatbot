@@ -1,15 +1,22 @@
+## 專案介紹
+
+這是一個適用於整合式教學平台(IEP) 的 AI 後端介面，提供平台 AI 助教的功能。
+
 ## 如何使用
 
 在專案目錄下創建一個 env 檔案，內容如下:
 
 ```
-GOOGLE_GEMINI_API_KEY="xxx"
-GOOGLE_SEARCH_API_KEY="xxx"
-GOOGLE_SEARCH_ENGINE_ID="xxx"
+GOOGLE_GEMINI_API_KEY="your google gemini api key"
+GOOGLE_SEARCH_API_KEY="your google search api key in GCP"
+GOOGLE_SEARCH_ENGINE_ID="your google search engineID in GCP"
 SUPABASE_URL = "https://xxx.xxx.xxx"
-SUPABASE_KEY = "xxx"
+SUPABASE_KEY = "your hosting supabase key"
 DB_URL = "postgresql://postgres:example123456@xxx.xxx.xxx.xxx:xxxxx/postgres"
-GEMINI_MODEL = "model name"
-EMBEDDING_MODEL = "model name"
+GEMINI_MODEL = "google ai model name"
+EMBEDDING_MODEL = "embedding model name (can use 'DMetaSoul/sbert-chinese-general-v2')"
+WEB_API_URL = "IEP backend api url"
+
+# Thinking budget is ai model thinking mode (-1: auto, 0: disable, 0~24576: token quantity)
 THINKING_BUDGET = -1
 ```
