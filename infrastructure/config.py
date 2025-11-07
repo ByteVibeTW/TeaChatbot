@@ -23,4 +23,4 @@ class Config:
         return genai.Client(api_key=self.GEMINI_API_KEY)
 
     def get_embedding_model(self):
-        return SentenceTransformer("DMetaSoul/sbert-chinese-general-v2")
+        return SentenceTransformer(self.EMBEDDING_MODEL)
