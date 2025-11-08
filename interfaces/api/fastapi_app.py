@@ -101,7 +101,6 @@ def create_app() -> FastAPI:
         course = json.loads(
             generate_course_use_case.execute(request, response_schema=CourseResponse)
         )
-        print(course)
         create_course_payload = {
             "name": course["courseName"],
             "type": "AI 助教生成課程",
@@ -125,7 +124,7 @@ def create_app() -> FastAPI:
                 section_template["chapters"].append(chapter_template)
             create_course_payload["sections"].append(section_template)
             create_course_payload["outline"] += f"{section_template['sectionName']}\n"
-        # print(create_course_payload)
+        print("payload: ", create_course_payload)
         course = api_request_service.execute(
             "POST", endpoint="courses/detail", payload=create_course_payload
         )
