@@ -12,7 +12,7 @@ class CreateUserTempUseCase:
     def execute(self, user_id: str, user_input: str, temp_data: dict):
         data = self.temp_file_service.load_temp_data()
         data[user_id] = {
-            "user_question": user_input,
+            "userQuestion": user_input,
             "questions": temp_data["questions"],
         }
         self.temp_file_service.save_temp_data(data)

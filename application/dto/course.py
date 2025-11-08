@@ -4,12 +4,12 @@ from pydantic import BaseModel
 
 
 class CourseSection(BaseModel):
-    chapter_name: str
+    chapterName: str
     description: str
     content: List[str]
 
 
 class CourseResponse(BaseModel):
-    course_name: str
+    courseName: str
     intro: str
     sections: List[CourseSection]

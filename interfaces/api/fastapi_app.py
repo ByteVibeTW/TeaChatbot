@@ -101,8 +101,9 @@ def create_app() -> FastAPI:
         course = json.loads(
             generate_course_use_case.execute(request, response_schema=CourseResponse)
         )
+        print(course)
         create_course_payload = {
-            "name": course["course_name"],
+            "name": course["courseName"],
             "type": "AI 助教生成課程",
             "intro": course["intro"],
             "outline": "",
@@ -110,7 +111,7 @@ def create_app() -> FastAPI:
         }
         for section_index, section in enumerate(course["sections"]):
             section_template = {
-                "sectionName": section["chapter_name"],
+                "sectionName": section["chapterName"],
                 "description": section["description"],
                 "orderIndex": section_index + 1,
                 "chapters": [],
@@ -124,7 +125,7 @@ def create_app() -> FastAPI:
                 section_template["chapters"].append(chapter_template)
             create_course_payload["sections"].append(section_template)
             create_course_payload["outline"] += f"{section_template['sectionName']}\n"
-        print(create_course_payload)
+        # print(create_course_payload)
         course = api_request_service.execute(
             "POST", endpoint="courses/detail", payload=create_course_payload
         )
@@ -132,7 +133,7 @@ def create_app() -> FastAPI:
         api_request_service.execute(
             "POST",
             "enrollments",
-            payload={"studentSub": request.user_id, "courseId": course_id},
+            payload={"studentSub": request.userId, "courseId": course_id},
         )
         return {
             "status": "Course created and user enrolled successfully.",
@@ -148,10 +149,11 @@ def create_app() -> FastAPI:
         chapter_content = generate_chapter_content_use_case.execute(
             request, response_schema=CourseContentResponse
         )
-        print(chapter_content)
+        # print(chapter_content)
+        print({"content": chapter_content})
         api_request_service.execute(
             "PUT",
-            endpoint=f"chapters/{request.chapter_id}",
+            endpoint=f"chapters/{request.chapterId}",
             payload={"content": chapter_content},
         )
         return {"status": "Chapter content updated successfully."}

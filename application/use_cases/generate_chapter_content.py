@@ -21,10 +21,10 @@ class GenerateChapterContentUseCase:
         self.practice_prompt_loader = PromptLoader(practice_prompt_template_file_name_2)
 
     def execute(self, request: CourseContentRequest, response_schema=None) -> str:
-        course_name = request.course_name
+        course_name = request.courseName
         course_intro = request.intro
-        section_name = request.section_name
-        chapter_name = request.chapter_name
+        section_name = request.sectionName
+        chapter_name = request.chapterName
         content_prompt_template = self.content_prompt_loader.load_prompt()
         practice_prompt_template = self.practice_prompt_loader.load_prompt()
         content_prompt = content_prompt_template.format(

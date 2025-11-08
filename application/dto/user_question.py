@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class QuestionSection(BaseModel):
-    question_text: str
+    questionText: str
     options: List[str]
 
 

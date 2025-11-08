@@ -25,11 +25,11 @@
 
 # 範例輸出：
 {{
-  "course_name": "課程名稱",
+  "courseName": "課程名稱",
   "intro": "課程簡介",
   "sections": [
     {{
-      "chapter_name": "第幾章：章節名稱",
+      "chapterName": "第幾章：章節名稱",
       "description": "本章節介紹",
       "content": [
         小標題1

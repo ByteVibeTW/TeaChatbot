@@ -24,7 +24,7 @@
 {{
     "questions": [
         {{
-            "question_text": "您目前對於 Python 網頁開發的經驗程度如何？",
+            "questionText": "您目前對於 Python 網頁開發的經驗程度如何？",
             "options": [
                 "完全是初學者，剛開始學習 Python。",
                 "熟悉 Python 語法，但沒有網頁開發經驗。",
@@ -33,7 +33,7 @@
             ]
         }},
         {{
-            "question_text": "您最感興趣的 Python 網頁框架是哪一個？",
+            "questionText": "您最感興趣的 Python 網頁框架是哪一個？",
             "options": [
                 "Django：功能完整、適合大型專案的全能型框架。",
                 "Flask：輕量級、高彈性的微框架。",
@@ -42,7 +42,7 @@
             ]
         }},
         {{
-            "question_text": "您學習或應用的主要目標是什麼？",
+            "questionText": "您學習或應用的主要目標是什麼？",
             "options": [
                 "建立個人作品集網站或部落格。",
                 "開發公司內部使用的管理系統。",

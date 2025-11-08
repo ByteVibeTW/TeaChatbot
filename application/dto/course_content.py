@@ -2,11 +2,11 @@ from pydantic import BaseModel
 
 
 class CourseContentRequest(BaseModel):
-    course_name: str
+    courseName: str
     intro: str
-    section_name: str
-    chapter_id: int
-    chapter_name: str
+    sectionName: str
+    chapterId: int
+    chapterName: str
 
 
 class CourseContentResponse(BaseModel):

@@ -4,10 +4,10 @@ from pydantic import BaseModel
 
 
 class UserAnswerSection(BaseModel):
-    question_text: str
+    questionText: str
     option: str
 
 
 class UserFeedbackRequest(BaseModel):
-    user_id: int
-    user_answer: List[UserAnswerSection]
+    userId: int
+    userAnswer: List[UserAnswerSection]
