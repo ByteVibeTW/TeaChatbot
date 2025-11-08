@@ -6,7 +6,7 @@ from application.dto.course import CourseResponse
 from application.dto.course_content import CourseContentRequest, CourseContentResponse
 from application.dto.knowledge import KnowledgeRequest
 from application.dto.user_feedback import UserFeedbackRequest
-from application.dto.user_question import UserQuestionRequest
+from application.dto.user_question import UserQuestionResponse
 from application.use_cases.create_user_temp import CreateUserTempUseCase
 from application.use_cases.generate_chapter_content import GenerateChapterContentUseCase
 from application.use_cases.generate_course import GenerateCourseUseCase
@@ -85,12 +85,12 @@ def create_app() -> FastAPI:
         "/ai/generate_questions/{userId}/{userInput}",
         summary="生成額外問題",
         tags=["生成課程模組"],
-        response_model=UserQuestionRequest,
+        response_model=UserQuestionResponse,
     )
     def generate_questions(userId: str, userInput: str):
         questions = json.loads(
             generate_questions_use_case.execute(
-                userInput, response_schema=UserQuestionRequest
+                userInput, response_schema=UserQuestionResponse
             )
         )
         create_user_temp_use_case.execute(userId, userInput, questions)
@@ -134,7 +134,10 @@ def create_app() -> FastAPI:
             "enrollments",
             payload={"studentSub": request.user_id, "courseId": course_id},
         )
-        return course
+        return {
+            "status": "Course created and user enrolled successfully.",
+            "courseId": course_id,
+        }
 
     @app.post(
         "/ai/generate_chapter_content",
@@ -151,6 +154,6 @@ def create_app() -> FastAPI:
             endpoint=f"chapters/{request.chapter_id}",
             payload={"content": chapter_content},
         )
-        return chapter_content
+        return {"status": "Chapter content updated successfully."}
 
     return app

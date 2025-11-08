@@ -8,5 +8,5 @@ class QuestionSection(BaseModel):
     options: List[str]
 
 
-class UserQuestionRequest(BaseModel):
+class UserQuestionResponse(BaseModel):
     questions: List[QuestionSection]
