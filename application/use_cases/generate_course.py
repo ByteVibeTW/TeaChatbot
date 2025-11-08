@@ -30,8 +30,7 @@ class GenerateCourseUseCase:
     def execute(self, request: UserFeedbackRequest, response_schema=None) -> str:
         temp_data = self.temp_file_service.load_temp_data()
         # print(temp_data[request.user_id])
-        user_id = str(request.userId)
-        user_input = temp_data[user_id]["userQuestion"]
+        user_input = temp_data[request.userId]["userQuestion"]
         search_query = self.gemini_service.generate_search_query(user_input)
         google_results = self.google_search.search(search_query, max_results=10)
         vector_results = self.vector_db.query(user_input, search_limit=10)
