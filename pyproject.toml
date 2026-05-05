@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "boto3>=1.40.59",
+    "cryptography>=48.0.0",
     "dotenv>=0.9.9",
     "fastapi>=0.117.1",
     "google>=3.0.0",
@@ -13,8 +14,9 @@ dependencies = [
     "google-generativeai>=0.8.5",
     "langchain>=1.0.3",
     "langchain-text-splitters>=1.0.0",
+    "pymysql>=1.1.2",
+    "qdrant-client>=1.15.1",
     "sentence-transformers>=5.1.0",
-    "supabase>=2.22.2",
+    "sqlalchemy>=2.0.44",
     "uvicorn>=0.37.0",
-    "vecs>=0.4.5",
 ]

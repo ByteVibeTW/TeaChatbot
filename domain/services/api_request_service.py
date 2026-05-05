@@ -3,14 +3,20 @@ import requests
 
 class APIRequest:
     def __init__(self, api_url: str):
-        self.api_url = api_url
+        self.api_url = api_url.rstrip("/")
         if not self.check_health():
-            raise Exception(f"API at {api_url} is not reachable.")
+            print(
+                f"[Startup] Warning: API at {self.api_url} is not reachable. "
+                "The service will continue and retry on request."
+            )
 
     def check_health(self) -> bool:
         health_endpoint = f"{self.api_url}/health"
-        response = requests.get(health_endpoint)
-        return response.status_code == 200
+        try:
+            response = requests.get(health_endpoint, timeout=3)
+            return response.status_code == 200
+        except requests.RequestException:
+            return False
 
     def execute(self, method: str, endpoint: str, payload: dict) -> dict:
         api_url = f"{self.api_url}/{endpoint}"
