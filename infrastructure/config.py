@@ -24,6 +24,9 @@ class Config:
         self.EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL")
         self.THINKING_BUDGET = int(os.environ.get("THINKING_BUDGET", "-1"))
         self.WEB_API_URL = os.environ.get("WEB_API_URL")
+        self.WEB_API_USERNAME = os.environ.get("WEB_API_USERNAME", "")  # Service account email
+        self.WEB_API_PASSWORD = os.environ.get("WEB_API_PASSWORD", "")  # Service account password
+        self.WEB_API_TOKEN = os.environ.get("WEB_API_TOKEN", "")  # JWT token for API authentication (optional fallback)
 
     def configure_gemini(self) -> genai.Client:
         return genai.Client(api_key=self.GEMINI_API_KEY)

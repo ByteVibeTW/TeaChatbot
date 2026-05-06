@@ -38,7 +38,7 @@ class GeminiService:
             ).text
         except Exception as e:
             print(f"[GeminiService] Error generating search query: {e}")
-            return None
+            return ""  # Return empty string instead of None
 
     # 根據主題生成相關問題
     def generate_question(self, topic: str, response_schema=None) -> str:
@@ -51,7 +51,8 @@ class GeminiService:
             ).text
         except Exception as e:
             print(f"[GeminiService] Error generating question: {e}")
-            return "ERROR"
+            # Return structured error that can be caught upstream
+            raise RuntimeError(f"Failed to generate question: {e}")
 
     # 通用的生成方法
     def generate_answer(self, prompt: str, response_schema=None) -> str:
@@ -62,5 +63,10 @@ class GeminiService:
                 model=self.model, contents=prompt, config=self.model_config
             ).text
         except Exception as e:
-            print(f"[GeminiService] Error generating answer: {e}")
-            return "抱歉，發生錯誤，無法生成回答。"
+            error_msg = str(e)
+            print(f"[GeminiService] Error generating answer: {error_msg}")
+            # Return structured error response
+            if "503" in error_msg or "high demand" in error_msg:
+                raise RuntimeError(f"Gemini API is currently unavailable: {error_msg}")
+            else:
+                raise RuntimeError(f"Failed to generate answer: {error_msg}")

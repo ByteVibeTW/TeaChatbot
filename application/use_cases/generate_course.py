@@ -48,6 +48,7 @@ class GenerateCourseUseCase:
             text1=text1, text2=text2, userInput=user_input, goal=goal
         )
         print(f"Final Prompt:\n{prompt}")
+        # Let exceptions propagate from gemini_service
         return self.gemini_service.generate_answer(
             prompt, response_schema=response_schema
         )

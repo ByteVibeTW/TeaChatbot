@@ -85,7 +85,12 @@ def create_app() -> FastAPI:
         model_thinking_budget=config.THINKING_BUDGET,
     )
     google_search = GoogleSearch(config.SEARCH_API_KEY, config.SEARCH_ENGINE_ID)
-    api_request_service = APIRequest(api_url=config.WEB_API_URL)
+    api_request_service = APIRequest(
+        api_url=config.WEB_API_URL,
+        auth_token=config.WEB_API_TOKEN,
+        username=config.WEB_API_USERNAME,
+        password=config.WEB_API_PASSWORD,
+    )
 
     insert_knowledge_use_case = InsertKnowledgeUseCase(vector_db, embedding_model)
     generate_questions_use_case = GenerateQuestionsUseCase(
@@ -131,46 +136,79 @@ def create_app() -> FastAPI:
 
     @app.post("/ai/generate_course", summary="Generate course", tags=["ai-course"])
     def generate_course(request: UserFeedbackRequest):
-        course = json.loads(
-            generate_course_use_case.execute(request, response_schema=CourseResponse)
-        )
+        try:
+            response_text = generate_course_use_case.execute(request, response_schema=CourseResponse)
+            course = json.loads(response_text)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Failed to parse course response as JSON: {e}")
+        except RuntimeError as e:
+            raise ValueError(f"AI service error: {e}")
+        except Exception as e:
+            raise ValueError(f"Unexpected error during course generation: {e}")
+        
+        # Build outline from sections
+        outline = ""
+        for section in course["sections"]:
+            outline += f"{section['chapterName']}\n"
+        
+        # Step 1: Create course
         create_course_payload = {
             "name": course["courseName"],
             "type": "AI Generated Course",
             "intro": course["intro"],
-            "outline": "",
-            "sections": [],
+            "outline": outline,
         }
+        print("Creating course with payload: ", create_course_payload)
+        created_course = api_request_service.execute(
+            "POST", endpoint="api/v1/courses", payload=create_course_payload
+        )
+        course_id = created_course["id"]
+        print(f"Course created with ID: {course_id}")
 
+        # Step 2: Create sections and chapters
         for section_index, section in enumerate(course["sections"]):
-            section_template = {
+            # Create section
+            create_section_payload = {
+                "courseId": course_id,
                 "sectionName": section["chapterName"],
-                "description": section["description"],
                 "orderIndex": section_index + 1,
-                "chapters": [],
             }
+            print(f"Creating section with payload: {create_section_payload}")
+            created_section = api_request_service.execute(
+                "POST", endpoint="api/v1/sections", payload=create_section_payload
+            )
+            section_id = created_section["id"]
+            print(f"Section created with ID: {section_id}")
+
+            # Create chapters within the section
             for chapter_index, chapter in enumerate(section["content"]):
-                chapter_template = {
+                create_chapter_payload = {
+                    "sectionId": section_id,
                     "chapterName": chapter,
                     "content": "",
                     "orderIndex": chapter_index + 1,
                 }
-                section_template["chapters"].append(chapter_template)
-            create_course_payload["sections"].append(section_template)
-            create_course_payload["outline"] += f"{section_template['sectionName']}\n"
+                print(f"Creating chapter with payload: {create_chapter_payload}")
+                created_chapter = api_request_service.execute(
+                    "POST", endpoint="api/v1/chapters", payload=create_chapter_payload
+                )
+                print(f"Chapter created with ID: {created_chapter['id']}")
 
-        print("payload: ", create_course_payload)
-        created_course = api_request_service.execute(
-            "POST", endpoint="courses/detail", payload=create_course_payload
-        )
-        course_id = created_course["id"]
-        api_request_service.execute(
-            "POST",
-            "enrollments",
-            payload={"studentSub": request.userId, "courseId": course_id},
-        )
+        # Step 3: Enroll user in the course
+        try:
+            # Convert userId to Long/int for API
+            student_id = int(request.userId) if isinstance(request.userId, str) else request.userId
+            api_request_service.execute(
+                "POST",
+                endpoint="api/v1/enrollments",
+                payload={"studentId": student_id, "courseId": course_id},
+            )
+        except Exception as e:
+            print(f"[Warning] Failed to enroll user {request.userId} in course {course_id}: {e}")
+            # Don't fail the entire operation if enrollment fails
+        
         return {
-            "status": "Course created and user enrolled successfully.",
+            "status": "Course created successfully.",
             "courseId": course_id,
         }
 
@@ -180,15 +218,19 @@ def create_app() -> FastAPI:
         tags=["ai-course"],
     )
     def generate_chapter_content(request: CourseContentRequest):
-        chapter_content = generate_chapter_content_use_case.execute(
-            request, response_schema=CourseContentResponse
-        )
-        print({"content": chapter_content})
-        api_request_service.execute(
-            "PUT",
-            endpoint=f"chapters/{request.chapterId}",
-            payload={"content": chapter_content},
-        )
-        return {"status": "Chapter content updated successfully."}
+        try:
+            chapter_content = generate_chapter_content_use_case.execute(
+                request, response_schema=CourseContentResponse
+            )
+            print({"content": chapter_content})
+            api_request_service.execute(
+                "PUT",
+                endpoint=f"api/v1/chapters/{request.chapterId}",
+                payload={"content": chapter_content},
+            )
+            return {"status": "Chapter content updated successfully."}
+        except Exception as e:
+            print(f"[Error] Failed to generate/update chapter content: {e}")
+            raise
 
     return app
